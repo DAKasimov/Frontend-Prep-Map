@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frontend Prep Map</title>
+  <meta name="description" content="Личная карта фронтенд-разработчика: шаги обучения, практика, повторение и вопросы с собеседований. Прогресс хранится в localStorage.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="#top" aria-label="В начало">
+        <span class="brand__mark" aria-hidden="true">◆</span>
+        <span class="brand__name">Frontend Prep Map</span>
+      </a>
+
+      <nav class="tabs" role="tablist" aria-label="Разделы">
+        <button class="tabs__btn" role="tab" id="tab-map" aria-controls="view-map" aria-selected="true" data-view="map">Карта</button>
+        <button class="tabs__btn" role="tab" id="tab-questions" aria-controls="view-questions" aria-selected="false" data-view="questions">Вопросы с собеса</button>
+      </nav>
+
+      <div class="topbar__actions">
+        <button class="icon-btn" id="theme-toggle" type="button" title="Тема: авто" aria-label="Переключить тему">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+        </button>
+        <div class="menu">
+          <button class="icon-btn" id="menu-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Данные и прогресс">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="19" cy="12" r="1.8" fill="currentColor"/></svg>
+          </button>
+          <div class="menu__list" id="menu-list" role="menu" hidden>
+            <button role="menuitem" type="button" data-action="export">Экспорт прогресса (.json)</button>
+            <button role="menuitem" type="button" data-action="import">Импорт прогресса</button>
+            <button role="menuitem" type="button" data-action="reset" class="danger">Сбросить весь прогресс</button>
+          </div>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout" id="top">
+    <aside class="rail" aria-label="Шаги маршрута">
+      <p class="rail__title">Маршрут</p>
+      <ol class="toc" id="toc"></ol>
+    </aside>
+
+    <main class="main">
+      <!-- ===== Карта ===== -->
+      <section id="view-map" class="view" role="tabpanel" aria-labelledby="tab-map">
+        <div class="hero">
+          <h1 class="hero__title">Карта фронтенд-разработчика</h1>
+          <p class="hero__lead">Проходите шаги по порядку, закрепляйте практикой, повторяйте прошлые темы и готовьтесь к собеседованию по реальным вопросам. Прогресс хранится только в этом браузере.</p>
+
+          <div class="stats" id="stats"></div>
+
+          <div class="hero__cta">
+            <button class="btn btn--primary" type="button" id="open-trainer">Тренировка вопросов</button>
+            <button class="btn" type="button" data-goto="questions">Все вопросы с собеса</button>
+          </div>
+          <p class="hero__src" id="sources"></p>
+        </div>
+
+        <ol class="route" id="route"></ol>
+      </section>
+
+      <!-- ===== Вопросы ===== -->
+      <section id="view-questions" class="view" role="tabpanel" aria-labelledby="tab-questions" hidden>
+        <div class="qhead">
+          <h1 class="qhead__title">Вопросы с собеседования</h1>
+          <p class="qhead__lead" id="qhead-lead"></p>
+        </div>
+
+        <div class="filters">
+          <label class="field">
+            <span class="field__label">Поиск</span>
+            <input type="search" id="q-search" placeholder="Например, Event Loop" autocomplete="off">
+          </label>
+          <label class="field">
+            <span class="field__label">Тема</span>
+            <select id="q-topic"></select>
+          </label>
+          <label class="field">
+            <span class="field__label">Источник</span>
+            <select id="q-source"></select>
+          </label>
+          <div class="field">
+            <span class="field__label">Статус</span>
+            <div class="chips" id="q-status" role="radiogroup" aria-label="Фильтр по статусу"></div>
+          </div>
+        </div>
+
+        <div class="qtools">
+          <span id="q-count" class="muted"></span>
+          <button class="btn btn--sm" type="button" id="toggle-hints" aria-pressed="false">Показать все подсказки</button>
+          <button class="btn btn--sm btn--primary" type="button" id="open-trainer-2">Тренировка</button>
+        </div>
+
+        <ul class="qlist" id="q-list"></ul>
+      </section>
+    </main>
+  </div>
+
+  <!-- Панель шага / проекта -->
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet__backdrop" data-close></div>
+    <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">
+      <header class="sheet__head">
+        <div>
+          <p class="sheet__kicker" id="sheet-kicker"></p>
+          <h2 class="sheet__title" id="sheet-title"></h2>
+        </div>
+        <button class="icon-btn" type="button" data-close aria-label="Закрыть панель">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+        </button>
+      </header>
+      <div class="sheet__body" id="sheet-body"></div>
+    </div>
+  </div>
+
+  <!-- Тренировка -->
+  <div class="sheet sheet--center" id="trainer" hidden>
+    <div class="sheet__backdrop" data-close></div>
+    <div class="sheet__panel trainer" role="dialog" aria-modal="true" aria-labelledby="trainer-title" tabindex="-1">
+      <header class="sheet__head">
+        <div>
+          <p class="sheet__kicker">Тренировка</p>
+          <h2 class="sheet__title" id="trainer-title">Отвечайте вслух, потом сверяйтесь</h2>
+        </div>
+        <button class="icon-btn" type="button" data-close aria-label="Закрыть тренировку">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
+        </button>
+      </header>
+      <div class="sheet__body" id="trainer-body"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
